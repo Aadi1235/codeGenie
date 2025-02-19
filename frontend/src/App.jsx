@@ -29,7 +29,7 @@ async function reviewCode() {
   setIsLoading(true);
   try {
     const response = await axios.post(
-      "https://codegenie-v7o2.onrender.com/api/review", // Use your Render backend URL
+      "https://codegenie-v7o2.onrender.com/ai/get-review", // Use your Render backend URL
       //"http://localhost:3000/ai/get-review", // Use your local backend URL
       { code }
     );
