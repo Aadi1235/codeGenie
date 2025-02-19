@@ -1,0 +1,39 @@
+# Node.js (backend & frontend)
+node_modules/
+package-lock.json
+yarn.lock
+.pnpm-debug.log*
+
+# Logs
+logs/
+*.log
+logs/*.log
+logs/*.pid
+logs/*.gz
+
+# Build Outputs
+dist/
+build/
+.out/
+.cache/
+
+# Environment Files
+.env
+.env.local
+.env.development.local
+.env.production.local
+
+# IDE/Editor Files
+.vscode/
+.idea/
+*.sublime-workspace
+
+# OS-generated Files
+.DS_Store
+Thumbs.db
+
+# Misc
+coverage/
+*.log
+template.md
+template.js
