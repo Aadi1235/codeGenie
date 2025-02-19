@@ -7,26 +7,38 @@ import Markdown from "react-markdown";
 import rehypehighlight from "rehype-highlight";
 import "highlight.js/styles/github-dark.css";
 import axios from "axios";
+import { Loader } from 'lucide-react';
+
 
 function App() {
 
-  const [code, setCode] = useState(`function sum() {
-  return 1 + 1;
-}}
-  }`);
+  const [code, setCode] = useState("");
 
   const [review, setReview] = useState();
+  const [isLoading, setIsLoading] = useState(false);
                 
   useEffect(() => {
     prism.highlightAll();
   }, []);
 
- async function reviewCode () {
-  const response =  await axios.post("http://localhost:3000/ai/get-review", {code})
-
-  setReview(response.data);
-  
- }
+async function reviewCode() {
+  if (!code.trim()) {
+    setReview("Please enter some code to review.");
+    return; 
+  }
+  setIsLoading(true);
+  try {
+    const response = await axios.post(
+      "https://codegenie-v7o2.onrender.com/api/review", // Use your Render backend URL
+      //"http://localhost:3000/ai/get-review", // Use your local backend URL
+      { code }
+    );
+    setReview(response.data);
+  } catch (error) {
+    console.error("Error reviewing code:", error);
+  }
+  setIsLoading(false);
+}
   return (
     <>
       <main>
@@ -37,19 +49,45 @@ function App() {
              onValueChange={(code) => setCode(code)}
              highlight={(code) => prism.highlight(code, prism.languages.javascript, "javascript")}
              padding={10}
+             placeholder="Please enter your code here for assistance..."
              style={{
                fontFamily: '"Fira code", "Fira Mono", monospace',
                fontSize: 16,
                border:"1px solid #ddd",
                borderRadius: "5px",
                height: "100%",
-                width: "100%"
+               width: "100%"
              }}            
             />
           </div>
-          <div onClick={reviewCode} className="review">Review</div>
+          <button 
+            onClick={reviewCode} 
+            className="review"
+            disabled={isLoading}
+          >
+            {isLoading ? (
+              <span className="loading-container">
+                <Loader className="spinner" />
+                Analyzing...
+              </span>
+            ) : (
+              "Review"
+            )}
+          </button>
+       </div>
+
+          <div className="right">
+          {isLoading ? (
+            <div className="loading-review">
+              <Loader className="spinner large" />
+              <p>Analyzing your code...</p>
+            </div>
+          ) : (
+            <Markdown rehypePlugins={[rehypehighlight]}>
+              {review || "Your code review will appear here"}
+            </Markdown>
+          )}
         </div>
-        <div className="right"><Markdown rehypePlugins={ [ rehypehighlight ] }>{review}</Markdown></div>
       </main>
     </>
   );
